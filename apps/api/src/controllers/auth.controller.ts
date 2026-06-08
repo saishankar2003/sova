@@ -8,6 +8,7 @@ import { sendSuccess, sendCreated } from '../utils/apiResponse';
 import { ApiError } from '../utils/apiError';
 import { logger } from '../utils/logger';
 import { OAuth2Client } from 'google-auth-library';
+import { sendPasswordResetEmail } from '../utils/email';
 
 /**
  * POST /api/auth/signup
@@ -274,8 +275,9 @@ export async function forgotPassword(req: Request, res: Response, next: NextFunc
       user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
       await user.save();
 
-      // TODO: Send password reset email via Resend
-      logger.info(`Password reset requested for ${email} (token: ${resetToken})`);
+      // Send actual password reset email via Resend
+      logger.info(`Password reset requested for ${email} (token generated)`);
+      await sendPasswordResetEmail(email, resetToken);
     }
 
     // Always return success to prevent email enumeration
