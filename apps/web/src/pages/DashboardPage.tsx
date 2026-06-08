@@ -16,15 +16,14 @@ export function DashboardPage() {
     },
   });
 
-  const { data: childrenData, isLoading: loadingChildren } = useQuery({
+  const { data: children = [], isLoading: loadingChildren } = useQuery({
     queryKey: ['children'],
     queryFn: async () => {
       const res = await api.get('/children');
-      return res.data;
+      return res.data.data;
     },
   });
 
-  const children = childrenData?.data || [];
   const recentDocs = (documentsData?.data || []).slice(0, 3);
 
   return (
