@@ -57,13 +57,14 @@ const userSchema = new Schema<IUserDocument>(
     timestamps: true,
     toJSON: {
       transform(_doc, ret) {
-        delete ret.passwordHash;
-        delete ret.refreshTokens;
-        delete ret.emailVerificationToken;
-        delete ret.passwordResetToken;
-        delete ret.passwordResetExpires;
-        delete ret.__v;
-        return ret;
+        const obj = ret as any;
+        delete obj.passwordHash;
+        delete obj.refreshTokens;
+        delete obj.emailVerificationToken;
+        delete obj.passwordResetToken;
+        delete obj.passwordResetExpires;
+        delete obj.__v;
+        return obj;
       },
     },
   },

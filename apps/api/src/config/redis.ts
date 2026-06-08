@@ -24,7 +24,7 @@ export function initRedis(): Redis | null {
   });
 
   redisClient.on('error', (err) => {
-    logger.error('Redis error:', err.message);
+    logger.error({ err }, 'Redis error');
   });
 
   return redisClient;

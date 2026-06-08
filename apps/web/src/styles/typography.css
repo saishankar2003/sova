@@ -1,0 +1,73 @@
+/* ═══════════════════════════════════════════════════════
+   NextX — Typography Scale
+   ═══════════════════════════════════════════════════════ */
+
+.text-xs   { font-size: var(--text-xs); line-height: var(--leading-normal); }
+.text-sm   { font-size: var(--text-sm); line-height: var(--leading-normal); }
+.text-base { font-size: var(--text-base); line-height: var(--leading-normal); }
+.text-lg   { font-size: var(--text-lg); line-height: var(--leading-snug); }
+.text-xl   { font-size: var(--text-xl); line-height: var(--leading-snug); }
+.text-2xl  { font-size: var(--text-2xl); line-height: var(--leading-tight); }
+.text-3xl  { font-size: var(--text-3xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); }
+.text-4xl  { font-size: var(--text-4xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); }
+.text-5xl  { font-size: var(--text-5xl); line-height: 1.1; letter-spacing: var(--tracking-tight); }
+
+.font-light    { font-weight: var(--font-light); }
+.font-regular  { font-weight: var(--font-regular); }
+.font-medium   { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold     { font-weight: var(--font-bold); }
+
+.text-primary   { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary  { color: var(--text-tertiary); }
+
+/* Responsive heading scale */
+.heading-page {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+
+.heading-section {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+}
+
+.heading-card {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+}
+
+.body-text {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+}
+
+.caption {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--text-tertiary);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  font-weight: var(--font-medium);
+}
+
+@media (min-width: 768px) {
+  .heading-page {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .heading-page {
+    font-size: var(--text-4xl);
+  }
+}

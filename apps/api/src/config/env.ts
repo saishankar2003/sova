@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
+  NODE_ENV: z.enum(['development', 'staging', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(4000),
 
   // URLs
@@ -10,15 +10,21 @@ const envSchema = z.object({
   ADMIN_URL: z.string().url().default('http://localhost:5174'),
 
   // MongoDB
-  MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
+  MONGODB_URI: z.string().default('mongodb://localhost:27017/nextx'),
   MONGODB_DB_NAME: z.string().default('nextx'),
 
   // Redis
   REDIS_URL: z.string().default('redis://localhost:6379'),
 
   // JWT
-  JWT_ACCESS_SECRET: z.string().min(32, 'JWT_ACCESS_SECRET must be at least 32 chars'),
-  JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET must be at least 32 chars'),
+  JWT_ACCESS_SECRET: z
+    .string()
+    .min(32, 'JWT_ACCESS_SECRET must be at least 32 chars')
+    .default('default_jwt_access_secret_key_at_least_32_chars_long'),
+  JWT_REFRESH_SECRET: z
+    .string()
+    .min(32, 'JWT_REFRESH_SECRET must be at least 32 chars')
+    .default('default_jwt_refresh_secret_key_at_least_32_chars_long'),
   JWT_ACCESS_EXPIRY: z.string().default('15m'),
   JWT_REFRESH_EXPIRY: z.string().default('7d'),
 

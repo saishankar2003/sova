@@ -14,14 +14,14 @@ export async function connectDatabase(): Promise<void> {
     logger.info(`✅ MongoDB connected to ${env.MONGODB_DB_NAME}`);
 
     mongoose.connection.on('error', (err) => {
-      logger.error('MongoDB connection error:', err);
+      logger.error({ err }, 'MongoDB connection error');
     });
 
     mongoose.connection.on('disconnected', () => {
       logger.warn('MongoDB disconnected. Attempting to reconnect...');
     });
   } catch (error) {
-    logger.error('❌ Failed to connect to MongoDB:', error);
+    logger.error({ err: error }, '❌ Failed to connect to MongoDB');
     process.exit(1);
   }
 }
