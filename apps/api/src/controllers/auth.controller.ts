@@ -140,7 +140,7 @@ export async function googleAuth(req: Request, res: Response, next: NextFunction
         passwordHash,
         profile: { 
           firstName: given_name || 'User', 
-          lastName: family_name || '', 
+          lastName: family_name || '-', 
           avatarUrl: picture || null, 
           phone: null 
         },
