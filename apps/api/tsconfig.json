@@ -10,7 +10,7 @@
     "noUnusedParameters": false,
     "baseUrl": ".",
     "paths": {
-      "@nextx/shared": ["../../packages/shared/dist/index.d.ts"]
+      "@nextx/shared": ["../../packages/shared/dist/index"]
     }
   },
   "include": ["src"]
