@@ -43,3 +43,6 @@ firebase-service-account.json
 
 # Sentry
 .sentryclirc
+
+# Local Uploads
+apps/api/uploads/

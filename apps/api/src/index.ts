@@ -3,6 +3,10 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
+import fs from 'fs';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerDocument } from './config/swagger';
 import { env } from './config/env';
 import { connectDatabase } from './config/database';
 import { initFirebase } from './config/firebase';
@@ -17,7 +21,11 @@ import { routes } from './routes';
 const app = express();
 
 // ─── Security ───
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
 app.use(
   cors({
     origin: [env.WEB_URL, env.ADMIN_URL],
@@ -49,6 +57,12 @@ app.get('/health', (_req, res) => {
 // ─── API routes ───
 app.use('/api', routes);
 
+// Serve uploads folder statically
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Serve Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // ─── 404 handler ───
 app.use((_req, res) => {
   res.status(404).json({
@@ -70,17 +84,25 @@ async function bootstrap() {
     initRedis();
     initEmail();
 
+    // Ensure uploads folder exists
+    const uploadsDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
     app.listen(env.PORT, () => {
       logger.info(`🚀 NextX API running on port ${env.PORT} (${env.NODE_ENV})`);
       logger.info(`   Health: ${env.API_URL}/health`);
       logger.info(`   API:    ${env.API_URL}/api`);
     });
   } catch (error) {
-    logger.error('❌ Failed to start server:', error);
+    logger.error({ err: error }, '❌ Failed to start server');
     process.exit(1);
   }
 }
 
-bootstrap();
+if (process.env.NODE_ENV !== 'test') {
+  bootstrap();
+}
 
 export default app;

@@ -126,7 +126,7 @@ export async function googleAuth(req: Request, res: Response, next: NextFunction
  */
 export async function refreshToken(req: Request, res: Response, next: NextFunction) {
   try {
-    const token = req.body.refreshToken || req.headers['x-refresh-token'];
+    const token = req.body.refreshToken || (req.headers['x-refresh-token'] as string);
     if (!token) {
       throw ApiError.unauthorized('Refresh token is required');
     }
@@ -256,7 +256,7 @@ export async function resetPassword(req: Request, res: Response, next: NextFunct
  */
 export async function verifyEmail(req: Request, res: Response, next: NextFunction) {
   try {
-    const { token } = req.params;
+    const token = req.params.token as string;
     const tokenHash = hashToken(token);
 
     const user = await User.findOne({ emailVerificationToken: tokenHash });

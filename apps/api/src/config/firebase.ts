@@ -24,7 +24,7 @@ export function initFirebase(): void {
 
     logger.info('✅ Firebase initialized');
   } catch (error) {
-    logger.error('❌ Failed to initialize Firebase:', error);
+    logger.error({ err: error }, '❌ Failed to initialize Firebase');
   }
 }
 
