@@ -4,6 +4,8 @@ import { AppLayout } from './components/layout/AppLayout';
 // ─── Auth Pages (lazy loaded) ───
 import { LoginPage } from './pages/auth/LoginPage';
 import { SignupPage } from './pages/auth/SignupPage';
+import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from './pages/auth/ResetPasswordPage';
 
 // ─── Main Pages (lazy loaded) ───
 import { DashboardPage } from './pages/DashboardPage';
@@ -16,6 +18,8 @@ export const router = createBrowserRouter([
   // ─── Public Routes ───
   { path: '/login', element: <LoginPage /> },
   { path: '/signup', element: <SignupPage /> },
+  { path: '/forgot-password', element: <ForgotPasswordPage /> },
+  { path: '/reset-password', element: <ResetPasswordPage /> },
 
   // ─── Protected Routes ───
   {
