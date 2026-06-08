@@ -13,7 +13,11 @@
     "sourceMap": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@nextx/shared": ["packages/shared/dist/index.d.ts"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }
