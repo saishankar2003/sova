@@ -2,7 +2,7 @@ services:
   - type: web
     name: nextx-api
     env: node
-    buildCommand: pnpm install --prod=false && pnpm run build
+    buildCommand: pnpm install --prod=false && pnpm run build --filter @nextx/api...
     startCommand: pnpm --filter @nextx/api start
     envVars:
       - key: NODE_VERSION
