@@ -195,6 +195,111 @@ export const swaggerDocument = {
         },
       },
     },
+    '/api/auth/google': {
+      post: {
+        summary: 'Log in or Register via Google',
+        tags: ['Authentication'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['idToken'],
+                properties: {
+                  idToken: { type: 'string', description: 'JWT token from Google OAuth provider' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Login successful' },
+          400: { description: 'Bad request / Invalid token' },
+        },
+      },
+    },
+    '/api/auth/logout': {
+      post: {
+        summary: 'Log out a user',
+        tags: ['Authentication'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  refreshToken: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Logged out successfully' },
+        },
+      },
+    },
+    '/api/auth/forgot-password': {
+      post: {
+        summary: 'Request a password reset email',
+        tags: ['Authentication'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['email'],
+                properties: {
+                  email: { type: 'string', format: 'email' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Reset link sent' },
+        },
+      },
+    },
+    '/api/auth/reset-password': {
+      post: {
+        summary: 'Reset password using a token',
+        tags: ['Authentication'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['token', 'password'],
+                properties: {
+                  token: { type: 'string' },
+                  password: { type: 'string', minLength: 8 },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Password reset successfully' },
+          400: { description: 'Invalid or expired token' },
+        },
+      },
+    },
+    '/api/auth/verify-email/{token}': {
+      get: {
+        summary: 'Verify user email address',
+        tags: ['Authentication'],
+        parameters: [{ name: 'token', in: 'path', required: true, schema: { type: 'string' } }],
+        responses: {
+          200: { description: 'Email verified successfully' },
+          400: { description: 'Invalid verification token' },
+        },
+      },
+    },
     '/api/users/me': {
       get: {
         summary: 'Get current user profile',
@@ -227,6 +332,93 @@ export const swaggerDocument = {
         responses: {
           200: { description: 'Profile updated' },
           401: { description: 'Unauthorized' },
+        },
+      },
+      delete: {
+        summary: 'Delete current user account',
+        tags: ['User Profile'],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: 'Account deleted successfully' },
+          401: { description: 'Unauthorized' },
+        },
+      },
+    },
+    '/api/users/me/password': {
+      patch: {
+        summary: 'Change user password',
+        tags: ['User Profile'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['currentPassword', 'newPassword', 'confirmPassword'],
+                properties: {
+                  currentPassword: { type: 'string' },
+                  newPassword: { type: 'string', minLength: 8 },
+                  confirmPassword: { type: 'string', minLength: 8 },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Password changed successfully' },
+          400: { description: 'Invalid current password' },
+        },
+      },
+    },
+    '/api/users/me/avatar': {
+      patch: {
+        summary: 'Upload user avatar image',
+        tags: ['User Profile'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['file'],
+                properties: {
+                  file: { type: 'string', format: 'binary' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Avatar uploaded' },
+          400: { description: 'Bad request' },
+        },
+      },
+    },
+    '/api/users/me/preferences': {
+      patch: {
+        summary: 'Update notification preferences',
+        tags: ['User Profile'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  emailNotifications: { type: 'boolean' },
+                  reminderEmails: { type: 'boolean' },
+                  weeklyDigest: { type: 'boolean' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Preferences updated' },
+          400: { description: 'Bad request' },
         },
       },
     },
