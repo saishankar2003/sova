@@ -7,6 +7,7 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/
 import { sendSuccess, sendCreated } from '../utils/apiResponse';
 import { ApiError } from '../utils/apiError';
 import { logger } from '../utils/logger';
+import { OAuth2Client } from 'google-auth-library';
 
 /**
  * POST /api/auth/signup
@@ -109,13 +110,77 @@ export async function login(req: Request, res: Response, next: NextFunction) {
  */
 export async function googleAuth(req: Request, res: Response, next: NextFunction) {
   try {
-    // TODO: Verify Google ID token with google-auth-library
     const { idToken } = req.body;
+    if (!idToken) throw ApiError.badRequest('Google ID token is required');
 
-    // Placeholder — will implement Google OAuth verification
-    logger.info(`Google auth attempt with token: ${idToken.substring(0, 20)}...`);
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      throw ApiError.unauthorized('Invalid Google token payload');
+    }
 
-    sendSuccess(res, { message: 'Google auth not yet implemented' });
+    const { email, given_name, family_name, picture, email_verified } = payload;
+
+    // Check if user exists
+    let user = await User.findOne({ email: email.toLowerCase() }).select('+refreshTokens');
+    
+    if (!user) {
+      // Create a random secure password for Google users
+      const randomPassword = require('crypto').randomBytes(32).toString('hex');
+      const passwordHash = await hashPassword(randomPassword);
+
+      user = await User.create({
+        email: email.toLowerCase(),
+        passwordHash,
+        profile: { 
+          firstName: given_name || 'User', 
+          lastName: family_name || '', 
+          avatarUrl: picture || null, 
+          phone: null 
+        },
+        emailVerified: email_verified || true,
+      });
+
+      // Create free subscription
+      await Subscription.create({
+        userId: user._id,
+        plan: Plan.FREE,
+        status: SubscriptionStatus.ACTIVE,
+      });
+      
+      logger.info(`New user registered via Google: ${email}`);
+    }
+
+    // Generate tokens
+    const accessToken = signAccessToken({
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    });
+
+    const refreshToken = signRefreshToken({
+      userId: user._id.toString(),
+      tokenVersion: Date.now(),
+    });
+
+    // Store hashed refresh token
+    user.refreshTokens.push(hashToken(refreshToken));
+    if (user.refreshTokens.length > 5) {
+      user.refreshTokens = user.refreshTokens.slice(-5);
+    }
+    user.lastLoginAt = new Date();
+    await user.save();
+
+    sendSuccess(res, {
+      accessToken,
+      refreshToken,
+      user: user.toJSON(),
+    });
   } catch (error) {
     next(error);
   }

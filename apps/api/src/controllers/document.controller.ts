@@ -119,8 +119,9 @@ export async function uploadDocument(req: Request, res: Response, next: NextFunc
     });
 
     sendCreated(res, doc);
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    console.error('UPLOAD ERROR:', error);
+    res.status(500).json({ success: false, error: error.message, stack: error.stack });
   }
 }
 
