@@ -20,6 +20,9 @@ import { routes } from './routes';
 
 const app = express();
 
+// Trust reverse proxy (e.g., Render) for correct IP rate limiting
+app.set('trust proxy', 1);
+
 // ─── Security ───
 app.use(
   helmet({

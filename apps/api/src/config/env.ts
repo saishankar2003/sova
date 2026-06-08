@@ -14,7 +14,7 @@ const envSchema = z.object({
   MONGODB_DB_NAME: z.string().default('nextx'),
 
   // Redis
-  REDIS_URL: z.string().default('redis://localhost:6379'),
+  REDIS_URL: z.string().optional(),
 
   // JWT
   JWT_ACCESS_SECRET: z
