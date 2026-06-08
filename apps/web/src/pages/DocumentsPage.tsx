@@ -48,6 +48,8 @@ export function DocumentsPage() {
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
+  const [folderToDelete, setFolderToDelete] = useState<Folder | null>(null);
+  const [docToDelete, setDocToDelete] = useState<DocItem | null>(null);
   
   // ─── Folder Form State ───
   const [folderName, setFolderName] = useState('');
@@ -327,9 +329,7 @@ export function DocumentsPage() {
                   className={styles.folderActionBtn}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (confirm(`Delete folder "${folder.name}"? Documents inside will remain unorganized.`)) {
-                      deleteFolderMutation.mutate(folder._id);
-                    }
+                    setFolderToDelete(folder);
                   }}
                   aria-label="Delete folder"
                 >
@@ -476,11 +476,7 @@ export function DocumentsPage() {
                         variant="ghost"
                         size="sm"
                         style={{ color: 'var(--color-error)' }}
-                        onClick={() => {
-                          if (confirm(`Are you sure you want to delete "${doc.name}"?`)) {
-                            deleteDocMutation.mutate(doc._id);
-                          }
-                        }}
+                        onClick={() => setDocToDelete(doc)}
                       >
                         🗑️ Delete
                       </Button>
@@ -666,6 +662,60 @@ export function DocumentsPage() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Folder Modal */}
+      {folderToDelete && (
+        <div className={styles.modalOverlay} onClick={() => setFolderToDelete(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Confirm Delete Folder</h3>
+            <p style={{ marginBottom: 'var(--space-4)', color: 'var(--text-secondary)' }}>
+              Are you sure you want to delete the folder "{folderToDelete.name}"? Documents inside will remain in the "Unorganized" section.
+            </p>
+            <div className={styles.modalActions}>
+              <Button type="button" variant="secondary" onClick={() => setFolderToDelete(null)}>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="danger"
+                onClick={() => {
+                  deleteFolderMutation.mutate(folderToDelete._id);
+                  setFolderToDelete(null);
+                }}
+              >
+                Delete Folder
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Document Modal */}
+      {docToDelete && (
+        <div className={styles.modalOverlay} onClick={() => setDocToDelete(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Confirm Delete Document</h3>
+            <p style={{ marginBottom: 'var(--space-4)', color: 'var(--text-secondary)' }}>
+              Are you sure you want to permanently delete the document "{docToDelete.name}"? This action cannot be undone.
+            </p>
+            <div className={styles.modalActions}>
+              <Button type="button" variant="secondary" onClick={() => setDocToDelete(null)}>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="danger"
+                onClick={() => {
+                  deleteDocMutation.mutate(docToDelete._id);
+                  setDocToDelete(null);
+                }}
+              >
+                Delete Document
+              </Button>
+            </div>
           </div>
         </div>
       )}

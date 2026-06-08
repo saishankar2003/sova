@@ -3,7 +3,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useUIStore } from '../../stores/uiStore';
 import styles from './AppLayout.module.css';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../../services/api';
 
 const NAV_ITEMS = [
@@ -28,6 +28,7 @@ export function AppLayout() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const { sidebarOpen, sidebarCollapsed, setSidebarOpen } = useUIStore();
   const navigate = useNavigate();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -95,19 +96,7 @@ export function AppLayout() {
             <span className={styles.navItemLabel}>Settings</span>
           </NavLink>
           <button
-            onClick={async () => {
-              if (confirm('Are you sure you want to log out?')) {
-                const refreshToken = localStorage.getItem('refreshToken');
-                if (refreshToken) {
-                  try {
-                    await api.post('/auth/logout', { refreshToken });
-                  } catch (err) {
-                    console.error('API logout failed:', err);
-                  }
-                }
-                logout();
-              }
-            }}
+            onClick={() => setShowLogoutConfirm(true)}
             className={clsx(styles.navItem, styles.logoutButton)}
           >
             <span className={styles.navItemIcon}>🚪</span>
@@ -147,6 +136,40 @@ export function AppLayout() {
           </div>
         </main>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to log out of your account?</p>
+            <div className={styles.modalFooter}>
+              <button 
+                className={styles.modalButtonSecondary} 
+                onClick={() => setShowLogoutConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className={styles.modalButtonPrimary}
+                onClick={async () => {
+                  const refreshToken = localStorage.getItem('refreshToken');
+                  if (refreshToken) {
+                    try {
+                      await api.post('/auth/logout', { refreshToken });
+                    } catch (err) {
+                      console.error('API logout failed:', err);
+                    }
+                  }
+                  logout();
+                }}
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
