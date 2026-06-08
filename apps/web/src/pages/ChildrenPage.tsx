@@ -25,6 +25,7 @@ export function ChildrenPage() {
   const { addToast } = useUIStore();
   const [showModal, setShowModal] = useState(false);
   const [editingChild, setEditingChild] = useState<Child | null>(null);
+  const [childToDelete, setChildToDelete] = useState<Child | null>(null);
 
   // ─── Fetch children ───
   const { data: children = [], isLoading } = useQuery<Child[]>({
@@ -92,6 +93,7 @@ export function ChildrenPage() {
     mutationFn: (id: string) => api.delete(`/children/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['children'] });
+      setChildToDelete(null);
       addToast({ type: 'success', title: 'Child removed' });
     },
   });
@@ -169,9 +171,7 @@ export function ChildrenPage() {
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (confirm(`Remove ${child.firstName}?`)) {
-                      deleteMutation.mutate(child._id);
-                    }
+                    setChildToDelete(child);
                   }}
                   style={{ color: 'var(--color-error-500)' }}
                 >
@@ -263,6 +263,35 @@ export function ChildrenPage() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {childToDelete && (
+        <div className={styles.modalOverlay} onClick={() => setChildToDelete(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2 className={styles.modalTitle}>Remove Child</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)', fontSize: 'var(--text-sm)', lineHeight: 1.5 }}>
+              Are you sure you want to remove <strong>{childToDelete.firstName} {childToDelete.lastName}</strong> from your account? This action cannot be undone and will permanently delete their profile and journey history.
+            </p>
+            <div className={styles.modalActions}>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => setChildToDelete(null)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="danger" 
+                type="button" 
+                loading={deleteMutation.isPending}
+                onClick={() => deleteMutation.mutate(childToDelete._id)}
+              >
+                Yes, Remove
+              </Button>
+            </div>
           </div>
         </div>
       )}
