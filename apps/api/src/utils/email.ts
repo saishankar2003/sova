@@ -39,6 +39,6 @@ export async function sendPasswordResetEmail(to: string, token: string) {
       logger.info(`Password reset email sent to ${to} (ID: ${data?.id})`);
     }
   } catch (err) {
-    logger.error('Error sending password reset email:', err);
+    logger.error({ err }, 'Error sending password reset email');
   }
 }
