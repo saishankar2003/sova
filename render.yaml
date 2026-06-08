@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: nextx-api
+    env: node
+    buildCommand: pnpm install --prod=false && pnpm run build
+    startCommand: pnpm --filter @nextx/api start
+    envVars:
+      - key: NODE_VERSION
+        value: 24.14.1
+      - key: PNPM_VERSION
+        value: 9.15.0
+      - key: NODE_ENV
+        value: production
+      # Security and Service Integrations (These will prompt you for values in the Render dashboard)
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
