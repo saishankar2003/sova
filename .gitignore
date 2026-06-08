@@ -38,6 +38,46 @@ pnpm-debug.log*
 coverage/
 .nyc_output/
 
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Turborepo
+.turbo/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
 # Firebase
 firebase-service-account.json
 
@@ -46,3 +86,4 @@ firebase-service-account.json
 
 # Local Uploads
 apps/api/uploads/
+*.tsbuildinfo
