@@ -3,12 +3,15 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "types": ["node"],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@nextx/shared": ["../../packages/shared/dist/index"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "./dist"],
