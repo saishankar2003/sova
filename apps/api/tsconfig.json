@@ -4,15 +4,15 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "module": "CommonJS",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "types": ["node"],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "baseUrl": ".",
-    "paths": {
-      "@nextx/shared": ["../../packages/shared/dist/index"]
-    }
+    "baseUrl": "."
   },
   "include": ["src"],
-  "exclude": ["node_modules", "./dist"]
+  "exclude": ["node_modules", "./dist"],
+  "references": [
+    { "path": "../../packages/shared" }
+  ]
 }
