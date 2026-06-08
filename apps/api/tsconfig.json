@@ -7,7 +7,11 @@
     "moduleResolution": "node",
     "types": ["node"],
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "baseUrl": ".",
+    "paths": {
+      "@nextx/shared": ["../../packages/shared/dist/index.d.ts"]
+    }
   },
   "include": ["src"]
 }
