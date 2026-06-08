@@ -16,6 +16,15 @@ export function DashboardPage() {
     },
   });
 
+  const { data: childrenData, isLoading: loadingChildren } = useQuery({
+    queryKey: ['children'],
+    queryFn: async () => {
+      const res = await api.get('/children');
+      return res.data;
+    },
+  });
+
+  const children = childrenData?.data || [];
   const recentDocs = (documentsData?.data || []).slice(0, 3);
 
   return (
@@ -27,10 +36,32 @@ export function DashboardPage() {
       <div className={styles.grid}>
         <Card hoverable>
           <CardHeader title="Journey Progress" subtitle="Your EHCP journey at a glance" />
-          <div className={styles.placeholder}>
-            <span className={styles.placeholderIcon}>🗺️</span>
-            <p>Add a child to start tracking your EHCP journey</p>
-          </div>
+          {loadingChildren ? (
+            <div className={styles.placeholder}>
+              <p>Loading journey...</p>
+            </div>
+          ) : children.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', marginTop: 'var(--space-2)' }}>
+              {children.map((child: any) => (
+                <div key={child._id} style={{ padding: 'var(--space-3)', border: '1px solid var(--border-secondary)', borderRadius: 'var(--radius-md)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
+                    <span style={{ fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)' }}>{child.firstName} {child.lastName}</span>
+                    <span style={{ fontSize: '1.25rem' }}>👶</span>
+                  </div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-primary-600)', fontWeight: 'var(--font-medium)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                    📍 {child.ehcpStage?.replace(/_/g, ' ')}
+                  </div>
+                </div>
+              ))}
+              <Link to="/children" style={{ color: 'var(--color-primary-600)', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', textDecoration: 'none', marginTop: 'var(--space-2)' }}>Manage children →</Link>
+            </div>
+          ) : (
+            <div className={styles.placeholder}>
+              <span className={styles.placeholderIcon}>🗺️</span>
+              <p>Add a child to start tracking your EHCP journey</p>
+              <Link to="/children" style={{ marginTop: 'var(--space-2)', color: 'var(--color-primary-600)', fontWeight: 'var(--font-medium)', textDecoration: 'none' }}>+ Add Child</Link>
+            </div>
+          )}
         </Card>
 
         <Card hoverable>
