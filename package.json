@@ -2,7 +2,7 @@
   "name": "nextx",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.5.2",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
