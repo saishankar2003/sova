@@ -8,6 +8,7 @@ import { env } from '../config/env';
 import { sendSuccess, sendCreated, sendNoContent } from '../utils/apiResponse';
 import { ApiError } from '../utils/apiError';
 import { parsePagination, buildPaginationMeta, getSkip } from '../utils/pagination';
+import { uploadEhcpDocument } from '../services/fileUpload.service';
 
 export async function listDocuments(req: Request, res: Response, next: NextFunction) {
   try {
@@ -58,48 +59,58 @@ export async function uploadDocument(req: Request, res: Response, next: NextFunc
     }
 
     let firebasePath = '';
+    let filePath = '';
+    let fileUrl = '';
     let downloadUrl = '';
 
-    // Check if Firebase service account is configured
-    let useFirebase = false;
-    try {
-      getStorageBucket();
-      useFirebase = true;
-    } catch {
-      useFirebase = false;
-    }
-
-    if (useFirebase) {
-      const bucket = getStorageBucket().bucket();
-      const docId = new mongoose.Types.ObjectId();
-      firebasePath = `users/${userId}/documents/${docId}/${file.originalname}`;
-      
-      const fileRef = bucket.file(firebasePath);
-      await fileRef.save(file.buffer, {
-        metadata: {
-          contentType: file.mimetype,
-          metadata: { uploadedBy: String(userId), documentId: String(docId) },
-        },
-      });
-
-      // Generate signed URL (valid for 1 hour)
-      const [url] = await fileRef.getSignedUrl({
-        action: 'read',
-        expires: Date.now() + 60 * 60 * 1000,
-      });
-      downloadUrl = url;
+    // Check if we should use Supabase (prototype)
+    if (env.SUPABASE_URL) {
+      const result = await uploadEhcpDocument(file.buffer, file.originalname, file.mimetype);
+      filePath = result.path;
+      fileUrl = result.publicUrl;
+      downloadUrl = result.publicUrl;
     } else {
-      // Fallback: Local filesystem
-      const uploadsDir = path.join(__dirname, '../../uploads');
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
+      // Fallback: Check if Firebase service account is configured
+      let useFirebase = false;
+      try {
+        getStorageBucket();
+        useFirebase = true;
+      } catch {
+        useFirebase = false;
       }
-      const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.originalname}`;
-      const localPath = path.join(uploadsDir, filename);
-      fs.writeFileSync(localPath, file.buffer);
-      
-      firebasePath = `uploads/${filename}`;
-      downloadUrl = `${env.API_URL}/uploads/${filename}`;
+
+      if (useFirebase) {
+        const bucket = getStorageBucket().bucket();
+        const docId = new mongoose.Types.ObjectId();
+        firebasePath = `users/${userId}/documents/${docId}/${file.originalname}`;
+        
+        const fileRef = bucket.file(firebasePath);
+        await fileRef.save(file.buffer, {
+          metadata: {
+            contentType: file.mimetype,
+            metadata: { uploadedBy: String(userId), documentId: String(docId) },
+          },
+        });
+
+        // Generate signed URL (valid for 1 hour)
+        const [url] = await fileRef.getSignedUrl({
+          action: 'read',
+          expires: Date.now() + 60 * 60 * 1000,
+        });
+        downloadUrl = url;
+      } else {
+        // Fallback: Local filesystem
+        const uploadsDir = path.join(__dirname, '../../uploads');
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.originalname}`;
+        const localPath = path.join(uploadsDir, filename);
+        fs.writeFileSync(localPath, file.buffer);
+        
+        firebasePath = `uploads/${filename}`;
+        downloadUrl = `${env.API_URL}/uploads/${filename}`;
+      }
     }
 
     const doc = await DocumentModel.create({
@@ -112,8 +123,10 @@ export async function uploadDocument(req: Request, res: Response, next: NextFunc
       mimeType: file.mimetype,
       sizeBytes: file.size,
       firebasePath,
+      filePath,
+      fileUrl,
       downloadUrl,
-      downloadUrlExpiry: useFirebase ? new Date(Date.now() + 60 * 60 * 1000) : null,
+      downloadUrlExpiry: (env.SUPABASE_URL || !firebasePath) ? null : new Date(Date.now() + 60 * 60 * 1000),
       tags,
       description,
     });
@@ -140,8 +153,14 @@ export async function downloadDocument(req: Request, res: Response, next: NextFu
     const doc = await DocumentModel.findOne({ _id: req.params.id, userId: req.user!.userId });
     if (!doc) throw ApiError.notFound('Document');
 
+    // If Supabase fileUrl exists, return that
+    if (doc.fileUrl) {
+      sendSuccess(res, { downloadUrl: doc.fileUrl });
+      return;
+    }
+
     // If local path, return direct download link
-    if (doc.firebasePath.startsWith('uploads/')) {
+    if (doc.firebasePath && doc.firebasePath.startsWith('uploads/')) {
       sendSuccess(res, { downloadUrl: `${env.API_URL}/${doc.firebasePath}` });
       return;
     }
@@ -188,13 +207,15 @@ export async function deleteDocument(req: Request, res: Response, next: NextFunc
     const doc = await DocumentModel.findOneAndDelete({ _id: req.params.id, userId: req.user!.userId });
     if (!doc) throw ApiError.notFound('Document');
 
-    // Delete local file if it's local
-    if (doc.firebasePath.startsWith('uploads/')) {
-      const filePath = path.join(__dirname, '../../', doc.firebasePath);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+    if (doc.filePath) {
+      // It's in Supabase - optionally delete from Supabase if needed
+      // but for prototype we can leave it or add deletion logic later
+    } else if (doc.firebasePath && doc.firebasePath.startsWith('uploads/')) {
+      const localFilePath = path.join(__dirname, '../../', doc.firebasePath);
+      if (fs.existsSync(localFilePath)) {
+        fs.unlinkSync(localFilePath);
       }
-    } else {
+    } else if (doc.firebasePath) {
       // Delete from Firebase
       try {
         const bucket = getStorageBucket().bucket();
