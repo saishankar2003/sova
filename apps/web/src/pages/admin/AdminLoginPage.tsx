@@ -8,6 +8,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { Button } from '../../components/ui/Button/Button';
 import { Input } from '../../components/ui/Input/Input';
 import styles from '../auth/AuthPage.module.css';
+import adminStyles from './AdminLoginPage.module.css';
 
 export function AdminLoginPage() {
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ export function AdminLoginPage() {
       const response = await api.post('/auth/admin/login', data);
       const { accessToken, refreshToken, user } = response.data.data;
       setAuth(user, accessToken, refreshToken);
-      
       const from = location.state?.from?.pathname || '/admin/dashboard';
       navigate(from, { replace: true });
     } catch (err: any) {
@@ -38,17 +38,17 @@ export function AdminLoginPage() {
   }
 
   return (
-    <div className={styles.authPage}>
-      <div className={styles.authCard}>
+    <div className={adminStyles.page}>
+      <div className={adminStyles.card}>
         <div className={styles.authHeader}>
-          <div className={styles.authLogo} style={{ background: 'linear-gradient(135deg, var(--color-danger-500), var(--color-warning-500))' }}>
-            <div className={styles.authLogoIcon} style={{ background: 'transparent' }}>N</div>
-            <span className={styles.authLogoText} style={{ color: 'var(--color-danger-600)', background: 'none', WebkitTextFillColor: 'initial' }}>NextX Admin</span>
+          <div className={styles.authLogo}>
+            <div className={styles.authLogoIcon} style={{ background: '#dc2626' }}>N</div>
+            <span className={styles.authLogoText} style={{ color: '#dc2626', background: 'none', WebkitTextFillColor: 'initial' }}>
+              NextX Admin
+            </span>
           </div>
           <h1 className={styles.authTitle}>Admin Portal</h1>
-          <p className={styles.authSubtitle}>
-            Authorized personnel only
-          </p>
+          <p className={styles.authSubtitle}>Authorized personnel only</p>
         </div>
 
         {serverError && <div className={styles.alertError}>{serverError}</div>}
@@ -62,7 +62,6 @@ export function AdminLoginPage() {
             error={errors.email?.message}
             {...register('email')}
           />
-
           <Input
             label="Password"
             type="password"
@@ -71,8 +70,13 @@ export function AdminLoginPage() {
             error={errors.password?.message}
             {...register('password')}
           />
-
-          <Button type="submit" fullWidth size="lg" loading={isSubmitting} style={{ background: 'var(--color-danger-600)' }}>
+          <Button
+            type="submit"
+            fullWidth
+            size="lg"
+            loading={isSubmitting}
+            style={{ background: '#dc2626', borderColor: '#dc2626' }}
+          >
             Access Portal
           </Button>
         </form>

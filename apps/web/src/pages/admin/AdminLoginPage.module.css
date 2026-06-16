@@ -1,0 +1,24 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  font-family: 'Poppins', sans-serif;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 48px 40px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 32px 24px;
+  }
+}
