@@ -1,39 +1,35 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { useUIStore } from '../../stores/uiStore';
-import styles from './AppLayout.module.css';
+import styles from './AdminLayout.module.css';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { api } from '../../services/api';
 
 const NAV_ITEMS = [
-  { section: 'Main', items: [
-    { to: '/dashboard', label: 'Dashboard' },
-    { to: '/chat', label: 'AI Chat' },
-    { to: '/children', label: 'My Children' },
+  { section: 'Overview', items: [
+    { to: '/admin/dashboard', label: 'Dashboard' },
+    { to: '/admin/users', label: 'Users' },
   ]},
-  { section: 'Journey', items: [
-    { to: '/documents', label: 'Documents' },
-    { to: '/reminders', label: 'Reminders' },
+  { section: 'Content', items: [
+    { to: '/admin/documents', label: 'Documents' },
+    { to: '/admin/knowledge', label: 'Knowledge Base' },
   ]},
-  { section: 'Resources', items: [
-    { to: '/faq', label: 'FAQ' },
-    { to: '/ehcp-intro', label: 'EHCP Guide' },
-    { to: '/support', label: 'Support' },
-    { to: '/subscription', label: 'Subscription' },
+  { section: 'Operations', items: [
+    { to: '/admin/support', label: 'Support Tickets' },
+    { to: '/admin/audit', label: 'Audit Logs' },
   ]},
 ];
 
-export function AppLayout() {
+export function AdminLayout() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const { sidebarOpen, sidebarCollapsed, setSidebarOpen } = useUIStore();
   const navigate = useNavigate();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login', { replace: true });
+      navigate('/admin/login', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -61,7 +57,7 @@ export function AppLayout() {
       >
         <div className={styles.sidebarHeader}>
           <div className={styles.logoIcon}>N</div>
-          <span className={styles.logo}>NextX</span>
+          <span className={styles.logo}>NextX Admin</span>
         </div>
 
         <nav className={styles.nav}>
@@ -85,14 +81,6 @@ export function AppLayout() {
         </nav>
 
         <div className={styles.sidebarFooter}>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              clsx(styles.navItem, isActive && styles.active)
-            }
-          >
-            <span className={styles.navItemLabel}>Settings</span>
-          </NavLink>
           <button
             onClick={() => setShowLogoutConfirm(true)}
             className={clsx(styles.navItem, styles.logoutButton)}
@@ -117,7 +105,7 @@ export function AppLayout() {
           </div>
 
           <div className={styles.headerRight}>
-            <div className={styles.userMenu} onClick={() => navigate('/profile')}>
+            <div className={styles.userMenu}>
               <div className={styles.userAvatar}>{initials}</div>
               <span className={styles.userName}>
                 {user?.profile.firstName} {user?.profile.lastName}
@@ -139,7 +127,7 @@ export function AppLayout() {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <h3>Confirm Logout</h3>
-            <p>Are you sure you want to log out of your account?</p>
+            <p>Are you sure you want to log out of your admin session?</p>
             <div className={styles.modalFooter}>
               <button 
                 className={styles.modalButtonSecondary} 
@@ -159,6 +147,7 @@ export function AppLayout() {
                     }
                   }
                   logout();
+                  navigate('/admin/login');
                 }}
               >
                 Log Out

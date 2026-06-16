@@ -88,6 +88,8 @@ export const swaggerDocument = {
           mimeType: { type: 'string' },
           sizeBytes: { type: 'integer' },
           firebasePath: { type: 'string' },
+          filePath: { type: 'string' },
+          fileUrl: { type: 'string' },
           downloadUrl: { type: 'string', nullable: true },
           tags: { type: 'array', items: { type: 'string' } },
           description: { type: 'string', nullable: true },

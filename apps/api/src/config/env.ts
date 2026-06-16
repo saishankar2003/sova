@@ -32,6 +32,10 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().default(''),
   GOOGLE_CLIENT_SECRET: z.string().default(''),
 
+  // Supabase (Prototype)
+  SUPABASE_URL: z.string().default(''),
+  SUPABASE_SECRET_KEY: z.string().default(''),
+
   // Firebase
   FIREBASE_PROJECT_ID: z.string().default(''),
   FIREBASE_STORAGE_BUCKET: z.string().default(''),

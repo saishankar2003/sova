@@ -32,7 +32,7 @@
 .logo {
   font-size: var(--text-xl);
   font-weight: var(--font-extrabold);
-  background: linear-gradient(135deg, var(--color-primary-500), var(--color-accent-400));
+  background: linear-gradient(135deg, var(--color-danger-500), var(--color-warning-500));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -42,7 +42,7 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, var(--color-primary-500), var(--color-accent-400));
+  background: linear-gradient(135deg, var(--color-danger-500), var(--color-warning-500));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,15 +93,15 @@
 }
 
 .navItem.active {
-  background: var(--color-primary-50);
-  color: var(--color-primary-600);
+  background: var(--color-danger-50);
+  color: var(--color-danger-600);
   font-weight: var(--font-semibold);
 }
 
 @media (prefers-color-scheme: dark) {
   .navItem.active {
-    background: hsl(222, 90%, 54%, 0.12);
-    color: var(--color-primary-400);
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--color-danger-400);
   }
 }
 
@@ -175,7 +175,7 @@
 .content {
   flex: 1;
   padding: var(--space-6);
-  max-width: var(--max-content);
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
 }
@@ -198,7 +198,7 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--color-primary-400), var(--color-accent-400));
+  background: linear-gradient(135deg, var(--color-danger-400), var(--color-warning-400));
   display: flex;
   align-items: center;
   justify-content: center;

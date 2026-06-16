@@ -34,7 +34,9 @@ export interface IDocumentDocument extends Document {
   originalName: string;
   mimeType: string;
   sizeBytes: number;
-  firebasePath: string;
+  firebasePath?: string;
+  filePath?: string;
+  fileUrl?: string;
   downloadUrl: string | null;
   downloadUrlExpiry: Date | null;
   tags: string[];
@@ -52,7 +54,9 @@ const documentSchema = new Schema<IDocumentDocument>(
     originalName: { type: String, required: true },
     mimeType: { type: String, required: true },
     sizeBytes: { type: Number, required: true },
-    firebasePath: { type: String, required: true },
+    firebasePath: { type: String, required: false },
+    filePath: { type: String, required: false },
+    fileUrl: { type: String, required: false },
     downloadUrl: { type: String, default: null },
     downloadUrlExpiry: { type: Date, default: null },
     tags: [{ type: String, trim: true }],
