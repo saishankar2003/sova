@@ -13,6 +13,7 @@ const NAV_ITEMS = [
     { to: '/children', label: 'My Children' },
   ]},
   { section: 'Journey', items: [
+    { to: '/journey', label: 'EHCP Journey' },
     { to: '/documents', label: 'Documents' },
     { to: '/reminders', label: 'Reminders' },
   ]},
