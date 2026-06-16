@@ -1,11 +1,23 @@
 import rateLimit from 'express-rate-limit';
+import { RedisStore } from 'rate-limit-redis';
+import { getRedisOptional } from '../config/redis';
+
+function makeStore() {
+  const redis = getRedisOptional();
+  if (!redis) return undefined; // falls back to in-memory
+  return new RedisStore({
+    // @ts-expect-error — sendCommand signature differs between ioredis versions
+    sendCommand: (...args: string[]) => redis.call(...args),
+  });
+}
 
 /** General API rate limiter: 100 requests per minute */
 export const generalLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
+  windowMs: 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
+  store: makeStore(),
   message: {
     success: false,
     error: {
@@ -21,6 +33,7 @@ export const authLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
+  store: makeStore(),
   message: {
     success: false,
     error: {
@@ -36,6 +49,7 @@ export const uploadLimiter = rateLimit({
   max: 20,
   standardHeaders: true,
   legacyHeaders: false,
+  store: makeStore(),
   message: {
     success: false,
     error: {

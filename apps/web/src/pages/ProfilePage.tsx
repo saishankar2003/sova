@@ -8,11 +8,13 @@ import { api } from '../services/api';
 import { Card } from '../components/ui/Card/Card';
 import { Button } from '../components/ui/Button/Button';
 import { Input } from '../components/ui/Input/Input';
+import { ConfirmModal } from '../components/ui/Modal/Modal';
 import styles from './ProfilePage.module.css';
 
 export function ProfilePage() {
   const { user, setUser, logout } = useAuthStore();
   const { addToast } = useUIStore();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // ─── Profile Form ───
   const profileForm = useForm({
@@ -212,14 +214,21 @@ export function ProfilePage() {
           Deleting your account is permanent and cannot be undone. All your data,
           documents, and journey history will be permanently removed.
         </p>
-        <Button variant="danger" size="sm" onClick={() => {
-          if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
-            api.delete('/users/me').then(() => logout());
-          }
-        }}>
+        <Button variant="danger" size="sm" onClick={() => setShowDeleteConfirm(true)}>
           Delete Account
         </Button>
       </div>
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        title="Delete Account"
+        message="Are you sure you want to delete your account? This cannot be undone. All your data, documents, and journey history will be permanently removed."
+        confirmText="Delete Account"
+        isDestructive={true}
+        onConfirm={() => {
+          api.delete('/users/me').then(() => logout());
+        }}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 }

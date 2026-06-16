@@ -167,6 +167,9 @@ export async function downloadDocument(req: Request, res: Response, next: NextFu
 
     // Otherwise generate signed URL from Firebase
     try {
+      if (!doc.firebasePath) {
+        throw ApiError.notFound('File path not found in document');
+      }
       const bucket = getStorageBucket().bucket();
       const fileRef = bucket.file(doc.firebasePath);
       const [url] = await fileRef.getSignedUrl({

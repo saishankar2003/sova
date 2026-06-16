@@ -13,6 +13,9 @@ import { initFirebase } from './config/firebase';
 import { initStripe } from './config/stripe';
 import { initRedis } from './config/redis';
 import { initEmail } from './config/email';
+import { initQueues } from './jobs/queue';
+import { startReminderWorker } from './jobs/workers/reminder.worker';
+import { startReminderScheduler } from './jobs/schedulers/reminderScheduler';
 import { errorHandler } from './middleware/errorHandler';
 import { generalLimiter } from './middleware/rateLimiter';
 import { logger } from './utils/logger';
@@ -84,8 +87,17 @@ async function bootstrap() {
     await connectDatabase();
     initFirebase();
     initStripe();
-    initRedis();
+    const redis = initRedis();
     initEmail();
+
+    // Start job queues and workers only when Redis is available
+    if (redis) {
+      initQueues();
+      startReminderWorker();
+      startReminderScheduler();
+    } else {
+      logger.warn('⚠️  Redis not available — job queues and reminder scheduling disabled');
+    }
 
     // Ensure uploads folder exists
     const uploadsDir = path.join(__dirname, '../uploads');
