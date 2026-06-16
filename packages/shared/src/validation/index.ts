@@ -4,3 +4,4 @@ export * from './child.schema';
 export * from './document.schema';
 export * from './reminder.schema';
 export * from './support.schema';
+export * from './journey.schema';

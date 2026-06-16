@@ -1,12 +1,6 @@
 import { api } from './api';
 
 export const userService = {
-  // ─── Journey ───
-  getJourney: async (childId: string) => {
-    const res = await api.get(`/journey/${childId}`);
-    return res.data.data;
-  },
-  
   // ─── Reminders ───
   getReminders: async () => {
     const res = await api.get('/reminders');

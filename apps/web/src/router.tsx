@@ -76,6 +76,7 @@ export const router = createBrowserRouter([
       { path: 'chat', element: <DashboardPage /> },
       { path: 'chat/:sessionId', element: <DashboardPage /> },
       { path: 'journey', element: <JourneyPage /> },
+      { path: 'journey/:childId', element: <JourneyPage /> },
       { path: 'documents', element: <DocumentsPage /> },
       { path: 'reminders', element: <RemindersPage /> },
       { path: 'faq', element: <DashboardPage /> },
