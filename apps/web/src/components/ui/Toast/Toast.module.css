@@ -18,7 +18,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-4);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-elevated);
   backdrop-filter: blur(10px);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
@@ -75,12 +75,12 @@
 .title {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-gray-900);
+  color: var(--text-primary);
 }
 
 .message {
   font-size: var(--text-xs);
-  color: var(--color-gray-600);
+  color: var(--text-secondary);
   line-height: 1.4;
 }
 

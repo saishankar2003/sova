@@ -3,7 +3,7 @@
   min-height: 100dvh;
   display: flex;
   font-family: 'Poppins', sans-serif;
-  background: #e6f3ff;
+  background: var(--auth-bg, #e6f3ff);
   overflow: hidden;
 }
 
@@ -60,7 +60,7 @@
 /* ── Right form panel ───────────────────────────────────────────── */
 .authRight {
   flex: 1;
-  background: #fcfeff;
+  background: var(--bg-elevated);
   border-radius: 25px 0 0 25px;
   display: flex;
   align-items: center;
@@ -281,4 +281,16 @@
     border-radius: 0;
     padding: 32px 24px;
   }
+}
+
+/* ── Dark mode overrides ─────────────────────────────────────────── */
+[data-theme="dark"] .authPage,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .authPage {
+    --auth-bg: hsl(220, 18%, 8%);
+  }
+}
+
+[data-theme="dark"] .authPage {
+  --auth-bg: hsl(220, 18%, 8%);
 }

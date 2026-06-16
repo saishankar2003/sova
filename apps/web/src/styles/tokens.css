@@ -190,9 +190,10 @@
   --input-placeholder: var(--color-gray-400);
 }
 
-/* ─── Dark Mode ─── */
+/* ─── Dark Mode Variables ─── */
+/* Applied via [data-theme="dark"] (manual toggle) OR system preference */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg-primary: hsl(220, 18%, 10%);
     --bg-secondary: hsl(220, 16%, 13%);
     --bg-tertiary: hsl(220, 14%, 16%);
@@ -215,4 +216,28 @@
     --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.3);
     --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.35);
   }
+}
+
+[data-theme="dark"] {
+  --bg-primary: hsl(220, 18%, 10%);
+  --bg-secondary: hsl(220, 16%, 13%);
+  --bg-tertiary: hsl(220, 14%, 16%);
+  --bg-elevated: hsl(220, 16%, 14%);
+  --bg-overlay: hsl(0, 0%, 0%, 0.6);
+
+  --text-primary: hsl(220, 20%, 93%);
+  --text-secondary: hsl(220, 12%, 65%);
+  --text-tertiary: hsl(220, 8%, 45%);
+  --text-inverse: hsl(220, 18%, 11%);
+
+  --border-primary: hsl(220, 12%, 22%);
+  --border-secondary: hsl(220, 12%, 18%);
+
+  --input-bg: hsl(220, 16%, 14%);
+  --input-border: hsl(220, 12%, 25%);
+  --input-placeholder: hsl(220, 8%, 40%);
+
+  --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.2);
+  --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.3);
+  --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.35);
 }

@@ -27,7 +27,7 @@ const NAV_ITEMS = [
 
 export function AppLayout() {
   const { user, isAuthenticated, logout } = useAuthStore();
-  const { sidebarOpen, sidebarCollapsed, setSidebarOpen } = useUIStore();
+  const { sidebarOpen, sidebarCollapsed, setSidebarOpen, themeMode, cycleTheme } = useUIStore();
   const navigate = useNavigate();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -86,6 +86,18 @@ export function AppLayout() {
         </nav>
 
         <div className={styles.sidebarFooter}>
+          <button
+            onClick={cycleTheme}
+            className={styles.navItem}
+            title={`Theme: ${themeMode}`}
+          >
+            <span className={styles.navItemIcon}>
+              {themeMode === 'dark' ? '🌙' : themeMode === 'light' ? '☀️' : '⚙️'}
+            </span>
+            <span className={styles.navItemLabel}>
+              {themeMode === 'dark' ? 'Dark Mode' : themeMode === 'light' ? 'Light Mode' : 'System Theme'}
+            </span>
+          </button>
           <NavLink
             to="/profile"
             className={({ isActive }) =>

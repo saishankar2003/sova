@@ -107,6 +107,12 @@
 
 
 
+.navItemIcon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .navItemLabel {
   white-space: nowrap;
   overflow: hidden;
