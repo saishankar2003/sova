@@ -36,3 +36,8 @@ export function getRedis(): Redis {
   }
   return redisClient;
 }
+
+/** Returns the Redis client if available, or null. Use for optional Redis features (e.g. rate limiter). */
+export function getRedisOptional(): Redis | null {
+  return redisClient;
+}

@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 import { logger } from './logger';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key_for_testing');
 const fromEmail = 'onboarding@resend.dev'; // Default testing email for Resend free tier
 
 export async function sendPasswordResetEmail(to: string, token: string) {

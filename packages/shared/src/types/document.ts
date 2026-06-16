@@ -21,7 +21,9 @@ export interface IDocument {
   originalName: string;
   mimeType: string;
   sizeBytes: number;
-  firebasePath: string;
+  firebasePath?: string;
+  filePath?: string;
+  fileUrl?: string;
   downloadUrl: string | null;
   downloadUrlExpiry: string | null;
   tags: string[];

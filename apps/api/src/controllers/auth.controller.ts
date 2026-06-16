@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../models/User';
 import { Subscription } from '../models/Subscription';
-import { Plan, SubscriptionStatus } from '@nextx/shared';
+import { Plan, SubscriptionStatus, UserRole } from '@nextx/shared';
 import { hashPassword, comparePassword, generateToken, hashToken } from '../utils/crypto';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/jwt';
 import { sendSuccess, sendCreated } from '../utils/apiResponse';
@@ -67,6 +67,61 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     const user = await User.findOne({ email: email.toLowerCase() }).select('+passwordHash +refreshTokens');
     if (!user || !user.passwordHash) {
       throw ApiError.unauthorized('Invalid email or password');
+    }
+
+    // Verify password
+    const isValid = await comparePassword(password, user.passwordHash);
+    if (!isValid) {
+      throw ApiError.unauthorized('Invalid email or password');
+    }
+
+    // Generate tokens
+    const accessToken = signAccessToken({
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    });
+
+    const refreshToken = signRefreshToken({
+      userId: user._id.toString(),
+      tokenVersion: Date.now(),
+    });
+
+    // Store hashed refresh token
+    user.refreshTokens.push(hashToken(refreshToken));
+    // Keep only last 5 refresh tokens
+    if (user.refreshTokens.length > 5) {
+      user.refreshTokens = user.refreshTokens.slice(-5);
+    }
+    user.lastLoginAt = new Date();
+    await user.save();
+
+    sendSuccess(res, {
+      accessToken,
+      refreshToken,
+      user: user.toJSON(),
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * POST /api/auth/admin/login
+ */
+export async function adminLogin(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { email, password } = req.body;
+
+    // Find user (include passwordHash for comparison)
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+passwordHash +refreshTokens');
+    if (!user || !user.passwordHash) {
+      throw ApiError.unauthorized('Invalid email or password');
+    }
+
+    // Verify role
+    if (user.role !== UserRole.ADMIN) {
+      throw ApiError.forbidden('Access denied. Admin privileges required.');
     }
 
     // Verify password
