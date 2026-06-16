@@ -110,7 +110,7 @@ export function AppLayout() {
           <div className={styles.headerLeft}>
             <button
               className={styles.menuButton}
-              onClick={() => setSidebarOpen(true)}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
               aria-label="Open menu"
             >
               ☰
