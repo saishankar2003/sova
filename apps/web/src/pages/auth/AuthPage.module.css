@@ -5,6 +5,15 @@
   font-family: 'Poppins', sans-serif;
   background: var(--auth-bg, #e6f3ff);
   overflow: hidden;
+
+  /* Force light theme on auth pages regardless of global dark mode */
+  --auth-bg: #e6f3ff;
+  --bg-elevated: #ffffff;
+  --text-primary: #111111;
+  --input-bg: rgba(176, 186, 195, 0.35);
+  --input-border: transparent;
+  --input-placeholder: rgba(0, 0, 0, 0.38);
+  --border-primary: rgba(176, 186, 195, 0.5);
 }
 
 /* ── Left decorative panel ──────────────────────────────────────── */
@@ -283,14 +292,25 @@
   }
 }
 
-/* ── Dark mode overrides ─────────────────────────────────────────── */
-[data-theme="dark"] .authPage,
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .authPage {
-    --auth-bg: hsl(220, 18%, 8%);
-  }
+/* ── Auth page always stays in light theme (ignore global dark mode) */
+[data-theme="dark"] .authPage {
+  --auth-bg: #e6f3ff;
+  --bg-elevated: #ffffff;
+  --text-primary: #111111;
+  --input-bg: rgba(176, 186, 195, 0.35);
+  --input-border: transparent;
+  --input-placeholder: rgba(0, 0, 0, 0.38);
+  --border-primary: rgba(176, 186, 195, 0.5);
 }
 
-[data-theme="dark"] .authPage {
-  --auth-bg: hsl(220, 18%, 8%);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .authPage {
+    --auth-bg: #e6f3ff;
+    --bg-elevated: #ffffff;
+    --text-primary: #111111;
+    --input-bg: rgba(176, 186, 195, 0.35);
+    --input-border: transparent;
+    --input-placeholder: rgba(0, 0, 0, 0.38);
+    --border-primary: rgba(176, 186, 195, 0.5);
+  }
 }
